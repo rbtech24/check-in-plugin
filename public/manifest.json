@@ -1,0 +1,22 @@
+
+{
+  "name": "Tech Check-in",
+  "short_name": "Tech Check-in",
+  "start_url": "/tech-check-in-form/",
+  "scope": "/tech-check-in-form/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#39B54A",
+  "icons": [
+    {
+      "src": "/tech-check-in-form/wp-content/plugins/tech-checkin-maps/public/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/tech-check-in-form/wp-content/plugins/tech-checkin-maps/public/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
