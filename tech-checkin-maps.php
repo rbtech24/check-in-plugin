@@ -322,6 +322,52 @@ function tcm_add_checkin_meta() {
         $before_photo = !empty($photos['before']) ? wp_get_attachment_url($photos['before']) : '';
         $after_photo = !empty($photos['after']) ? wp_get_attachment_url($photos['after']) : '';
 
+        // Facebook Open Graph
+        echo '<meta property="fb:app_id" content="' . esc_attr(get_option('tcm_facebook_app_id', '')) . '">';
+        echo '<meta property="og:type" content="article">';
+        echo '<meta property="og:site_name" content="' . esc_attr(get_bloginfo('name')) . '">';
+        echo '<meta property="og:title" content="' . esc_attr("$service in $city, $state") . '">';
+        echo '<meta property="og:description" content="' . esc_attr($description) . '">';
+        echo '<meta property="og:url" content="' . esc_url(get_permalink()) . '">';
+        if (!empty($after_photo)) {
+            echo '<meta property="og:image" content="' . esc_url($after_photo) . '">';
+            echo '<meta property="og:image:width" content="1200">';
+            echo '<meta property="og:image:height" content="630">';
+        }
+
+        // Google Business structured data
+        $business_schema = array(
+            '@context' => 'https://schema.org',
+            '@type' => 'LocalBusiness',
+            'name' => get_bloginfo('name'),
+            'image' => array($before_photo, $after_photo),
+            'description' => $description,
+            'address' => array(
+                '@type' => 'PostalAddress',
+                'addressLocality' => $city,
+                'addressRegion' => $state,
+                'addressCountry' => 'US'
+            ),
+            'geo' => array(
+                '@type' => 'GeoCoordinates',
+                'latitude' => $meta['tcm_latitude'][0] ?? '',
+                'longitude' => $meta['tcm_longitude'][0] ?? ''
+            ),
+            'review' => array(
+                '@type' => 'Review',
+                'reviewRating' => array(
+                    '@type' => 'Rating',
+                    'ratingValue' => '5'
+                ),
+                'author' => array(
+                    '@type' => 'Person',
+                    'name' => get_post_meta(get_the_ID(), 'tcm_technician', true)
+                )
+            )
+        );
+
+        echo '<script type="application/ld+json">' . wp_json_encode($business_schema) . '</script>';
+
         global $post;
         if (!$post) {
             $post = get_post();
