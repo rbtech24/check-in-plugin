@@ -104,6 +104,58 @@ function tcm_settings_page() {
                     </td>
                 </tr>
 
+                <!-- Facebook Integration -->
+                <tr>
+                    <th scope="row">
+                        <label for="tcm_facebook_page_token"><?php _e('Facebook Page Access Token', 'tech-checkin-maps'); ?></label>
+                    </th>
+                    <td>
+                        <input type="password" 
+                               id="tcm_facebook_page_token"
+                               name="tcm_facebook_page_token"
+                               value="<?php echo esc_attr(get_option('tcm_facebook_page_token')); ?>"
+                               class="regular-text">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <label for="tcm_facebook_page_id"><?php _e('Facebook Page ID', 'tech-checkin-maps'); ?></label>
+                    </th>
+                    <td>
+                        <input type="text" 
+                               id="tcm_facebook_page_id"
+                               name="tcm_facebook_page_id"
+                               value="<?php echo esc_attr(get_option('tcm_facebook_page_id')); ?>"
+                               class="regular-text">
+                    </td>
+                </tr>
+
+                <!-- Google Business Integration -->
+                <tr>
+                    <th scope="row">
+                        <label for="tcm_google_api_key"><?php _e('Google Business API Key', 'tech-checkin-maps'); ?></label>
+                    </th>
+                    <td>
+                        <input type="password" 
+                               id="tcm_google_api_key"
+                               name="tcm_google_api_key"
+                               value="<?php echo esc_attr(get_option('tcm_google_api_key')); ?>"
+                               class="regular-text">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <label for="tcm_google_location_id"><?php _e('Google Business Location ID', 'tech-checkin-maps'); ?></label>
+                    </th>
+                    <td>
+                        <input type="text" 
+                               id="tcm_google_location_id"
+                               name="tcm_google_location_id"
+                               value="<?php echo esc_attr(get_option('tcm_google_location_id')); ?>"
+                               class="regular-text">
+                    </td>
+                </tr>
+
                 <!-- OpenAI API Key Section -->
                 <tr>
                     <th scope="row">

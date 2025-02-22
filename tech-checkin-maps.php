@@ -199,6 +199,10 @@ function tcm_handle_form_submission() {
 
         if (!empty($photos)) {
             update_post_meta($post_id, 'tcm_photos', $photos);
+
+            // Auto-post to social media
+            tcm_post_to_facebook($post_id);
+            tcm_post_to_google_business($post_id);
         }
     }
 

@@ -448,6 +448,108 @@ function tcm_clear_checkin_cache($post_id) {
         wp_cache_flush();
     }
 
+/**
+ * Auto-post check-in to Facebook
+ */
+function tcm_post_to_facebook($post_id) {
+    $fb_page_token = get_option('tcm_facebook_page_token');
+    $fb_page_id = get_option('tcm_facebook_page_id');
+    
+    if (empty($fb_page_token) || empty($fb_page_id)) {
+        tcm_log_error('facebook_error', 'Missing Facebook credentials');
+        return false;
+    }
+
+    $meta = tcm_get_checkin_meta($post_id);
+    $photos = get_post_meta($post_id, 'tcm_photos', true);
+    $after_photo = !empty($photos['after']) ? wp_get_attachment_url($photos['after']) : '';
+    
+    $message = sprintf(
+        "New %s completed in %s, %s! 🛠️\n\nOur technician %s provided excellent service. Check out the results!\n\n#%s #ServicePro #QualityService",
+        $meta['service'],
+        $meta['city'],
+        $meta['state'],
+        $meta['technician'],
+        str_replace(' ', '', $meta['service'])
+    );
+
+    $url = "https://graph.facebook.com/v18.0/{$fb_page_id}/photos";
+    $args = array(
+        'method' => 'POST',
+        'body' => array(
+            'message' => $message,
+            'url' => $after_photo,
+            'access_token' => $fb_page_token
+        )
+    );
+
+    $response = wp_remote_post($url, $args);
+    if (is_wp_error($response)) {
+        tcm_log_error('facebook_error', $response->get_error_message());
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Post check-in to Google Business Profile
+ */
+function tcm_post_to_google_business($post_id) {
+    $google_api_key = get_option('tcm_google_api_key');
+    $location_id = get_option('tcm_google_location_id');
+    
+    if (empty($google_api_key) || empty($location_id)) {
+        tcm_log_error('google_error', 'Missing Google Business credentials');
+        return false;
+    }
+
+    $meta = tcm_get_checkin_meta($post_id);
+    $photos = get_post_meta($post_id, 'tcm_photos', true);
+    $after_photo = !empty($photos['after']) ? wp_get_attachment_url($photos['after']) : '';
+
+    $post_data = array(
+        'topicType' => 'LOCAL_POST',
+        'languageCode' => 'en-US',
+        'summary' => sprintf(
+            "Completed %s in %s, %s. Professional service by %s. #ServicePro",
+            $meta['service'],
+            $meta['city'],
+            $meta['state'],
+            $meta['technician']
+        ),
+        'callToAction' => array(
+            'actionType' => 'LEARN_MORE',
+            'url' => get_permalink($post_id)
+        )
+    );
+
+    if ($after_photo) {
+        $post_data['media'] = array(
+            array('mediaFormat' => 'PHOTO', 'sourceUrl' => $after_photo)
+        );
+    }
+
+    $url = "https://mybusinessaccounts.googleapis.com/v4/{$location_id}/localPosts";
+    $args = array(
+        'method' => 'POST',
+        'headers' => array(
+            'Authorization' => 'Bearer ' . $google_api_key,
+            'Content-Type' => 'application/json'
+        ),
+        'body' => json_encode($post_data)
+    );
+
+    $response = wp_remote_post($url, $args);
+    if (is_wp_error($response)) {
+        tcm_log_error('google_error', $response->get_error_message());
+        return false;
+    }
+
+    return true;
+}
+
+
     foreach ($cache_keys as $key) {
         delete_transient($key);
     }
