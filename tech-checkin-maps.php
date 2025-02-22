@@ -301,9 +301,18 @@ function tcm_add_checkin_meta() {
         echo '<meta property="og:updated_time" content="' . esc_attr(get_the_modified_date('c')) . '">';
         if (!empty($photos['after'])) {
             echo '<meta property="og:image" content="' . esc_url(wp_get_attachment_url($photos['after'])) . '">';
+            echo '<meta property="og:video" content="' . esc_url(str_replace('.jpg', '.mp4', wp_get_attachment_url($photos['after']))) . '">';
+            echo '<meta property="og:video:type" content="video/mp4">';
             echo '<meta property="og:image:width" content="1200">';
             echo '<meta property="og:image:height" content="630">';
         }
+
+        // Additional SEO tags
+        echo '<link rel="canonical" href="' . esc_url(get_permalink()) . '">';
+        echo '<meta name="geo.position" content="' . esc_attr($meta['tcm_latitude'][0] . ';' . $meta['tcm_longitude'][0]) . '">';
+        echo '<meta name="geo.region" content="' . esc_attr($meta['tcm_state'][0]) . '">';
+        echo '<meta name="geo.placename" content="' . esc_attr($meta['tcm_city'][0]) . '">';
+
 
         // Open Graph
         echo '<meta property="og:title" content="' . esc_attr("$service in $city, $state") . '">';
@@ -399,36 +408,36 @@ function tcm_add_checkin_meta() {
                         'longitude' => $meta['tcm_longitude'][0] ?? ''
                     ),
                     'image' => array($before_photo, $after_photo),
-                'areaServed' => array(
-                    '@type' => 'City',
-                    'name' => $city
-                )
-            ),
-            'serviceType' => $service,
-            'category' => $service,
-            'offers' => array(
-                '@type' => 'Offer',
-                'availability' => 'https://schema.org/InStock',
-                'areaServed' => array(
-                    '@type' => 'City',
-                    'name' => $city,
-                    'containedIn' => $state
-                )
-            ),
-            'review' => array(
-                '@type' => 'Review',
-                'reviewRating' => array(
-                    '@type' => 'Rating',
-                    'ratingValue' => '5'
+                    'areaServed' => array(
+                        '@type' => 'City',
+                        'name' => $city
+                    )
                 ),
-                'author' => array(
-                    '@type' => 'Person',
-                    'name' => get_post_meta(get_the_ID(), 'tcm_technician', true)
+                'serviceType' => $service,
+                'category' => $service,
+                'offers' => array(
+                    '@type' => 'Offer',
+                    'availability' => 'https://schema.org/InStock',
+                    'areaServed' => array(
+                        '@type' => 'City',
+                        'name' => $city,
+                        'containedIn' => $state
+                    )
+                ),
+                'review' => array(
+                    '@type' => 'Review',
+                    'reviewRating' => array(
+                        '@type' => 'Rating',
+                        'ratingValue' => '5'
+                    ),
+                    'author' => array(
+                        '@type' => 'Person',
+                        'name' => get_post_meta(get_the_ID(), 'tcm_technician', true)
+                    )
                 )
-            )
-        );
+            );
 
-        echo '<script type="application/ld+json">' . wp_json_encode($schema) . '</script>';
+            echo '<script type="application/ld+json">' . wp_json_encode($schema) . '</script>';
+        }
     }
-}
 }
