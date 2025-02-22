@@ -58,7 +58,7 @@ $service_text = !empty($atts['service']) ? esc_html($atts['service']) : "Service
         </button>
     </div>
     <h1 class="tcm-section-title"><?php echo esc_html($title); ?></h1>
-    <h2 class="tcm-section-subtitle"><?php echo esc_html($service_text . $location_text); ?> Reviews & Check-ins</h2>
+    <!--<h2 class="tcm-section-subtitle"><?php echo esc_html($service_text . $location_text); ?> Reviews & Check-ins</h2>-->
 
     <!-- LocalBusiness Schema -->
     <script type="application/ld+json">
